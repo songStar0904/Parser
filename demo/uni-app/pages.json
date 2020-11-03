@@ -9,7 +9,16 @@
 			"path": "pages/turn/turn",
 			"style": {}
 		}
-	],
+	    ,{
+            "path" : "pages/iframe/iframe",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",

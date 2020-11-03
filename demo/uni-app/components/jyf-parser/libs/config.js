@@ -2,8 +2,51 @@
 var cfg = {
 	// 出错占位图
 	errorImg: null,
+	// 视频源正则
+	videoReg: {
+		tx: /https:\/\/v\.qq\.com.*vid=(\w*)/
+	},
 	// 过滤器函数
-	filter: null,
+	filter(node, cxt) {
+		// 轻站拓展
+		if (node.name == 'iframe') {
+			console.log("iframe", node);
+			cxt.bubble(); // 使得 不被 rich-text 包含
+			let src = node.attrs.src
+			let reg = this.videoReg.tx
+			if (reg.test(src)) {
+				node.attrs.mode = 'tx'
+				// safeGetValue 只是一个取值的函数，可自行编写自己的取值函数。
+				node.attrs.vid = safeGetValue([1], node.attrs.src.match(reg)) || "";
+			}
+		}
+		// 此函数作用类似于ramda的path和pathOr，用于安全取值。
+		function safeGetValue() {
+			const argsLength = arguments.length
+	
+			if (argsLength !== 2 && argsLength !== 3) {
+				throw '必须为两个或者三个参数'
+			}
+			var defaultValue
+			if (argsLength === 3) {
+				var [_defaultValue, keys, item] = arguments
+				defaultValue = _defaultValue
+			} else {
+				var [keys, item] = arguments
+			}
+			if (!Array.isArray(keys)) {
+				throw '参数有误，取值的keys必须为数组'
+			}
+			try {
+				keys.forEach(key => {
+					item = item[key]
+				})
+			} catch (e) {
+				return defaultValue
+			}
+			return item
+		};
+	},
 	// 代码高亮函数
 	highlight: null,
 	// 文本处理函数
@@ -31,13 +74,13 @@ var cfg = {
 	// 块级标签，将被转为 div
 	blockTags: makeMap('address,article,aside,body,caption,center,cite,footer,header,html,nav,pre,section'),
 	// 将被移除的标签
-	ignoreTags: makeMap('area,base,canvas,frame,iframe,input,link,map,meta,param,script,source,style,svg,textarea,title,track,wbr'),
+	ignoreTags: makeMap('area,base,canvas,frame,input,link,map,meta,param,script,source,style,svg,textarea,title,track,wbr'),
 	// 只能被 rich-text 显示的标签
 	richOnlyTags: makeMap('a,colgroup,fieldset,legend'),
 	// 自闭合的标签
 	selfClosingTags: makeMap('area,base,br,col,circle,ellipse,embed,frame,hr,img,input,line,link,meta,param,path,polygon,rect,source,track,use,wbr'),
 	// 信任的标签
-	trustTags: makeMap('a,abbr,ad,audio,b,blockquote,br,code,col,colgroup,dd,del,dl,dt,div,em,fieldset,h1,h2,h3,h4,h5,h6,hr,i,img,ins,label,legend,li,ol,p,q,source,span,strong,sub,sup,table,tbody,td,tfoot,th,thead,tr,title,ul,video'),
+	trustTags: makeMap('a,abbr,ad,audio,b,blockquote,br,code,col,colgroup,dd,del,dl,dt,div,em,fieldset,h1,h2,h3,h4,h5,h6,hr,i,img,ins,label,legend,li,ol,p,q,source,span,strong,sub,sup,table,tbody,td,tfoot,th,thead,tr,title,ul,video,iframe'),
 	// 默认的标签样式
 	userAgentStyles: {
 		address: 'font-style:italic',

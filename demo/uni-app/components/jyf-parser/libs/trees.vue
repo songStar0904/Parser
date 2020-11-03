@@ -55,6 +55,7 @@
 					</view>
 				</view>
 			</view>
+			<iframe-video v-else-if="n.name=='iframe' && n.attrs.vid" :vid="n.attrs.vid" :mode="n.attrs.mode" :cusStyle="n.attrs.style" :cusClass="n.attrs.class"> </iframe-video>
 			<!--#ifdef APP-PLUS-->
 			<iframe v-else-if="n.name=='iframe'" :style="n.attrs.style" :allowfullscreen="n.attrs.allowfullscreen" :frameborder="n.attrs.frameborder"
 			 :width="n.attrs.width" :height="n.attrs.height" :src="n.attrs.src" />
@@ -76,10 +77,12 @@
 <script>
 	global.Parser = {};
 	import trees from './trees'
+	import iframeVideo from '../plugins/iframe-video/iframe-video.vue'
 	const errorImg = require('../libs/config.js').errorImg;
 	export default {
 		components: {
-			trees
+			trees,
+			iframeVideo
 		},
 		name: 'trees',
 		data() {
